@@ -42,7 +42,7 @@ function setup() {
     if (typeof webkitSpeechRecognition !== "undefined") {
 
         if (!speech) {
-            speech = new p5.SpeechRec('en');
+            speech = new p5.SpeechRec('en-US', a => console.log(a, 'Listening'));
             speech.interimResults = true;
             speech.onResult = () => {
                 if (!speech.resultString)
