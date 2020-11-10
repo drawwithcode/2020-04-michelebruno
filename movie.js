@@ -35,8 +35,7 @@
  *
  */
 let /** @var {Movie} movie */ movie,
-    container,
-    row;
+    container;
 
 function preload() {
     const location = new URL(window.location),
@@ -46,54 +45,101 @@ function preload() {
     url.searchParams.set('apikey', '9c88f358');
     url.searchParams.set('i', movieId);
 
-    movie = loadJSON(url)
+    movie = loadJSON(url);
 }
 
 function setup() {
     noCanvas();
 
-    console.log(movie)
+    console.log(movie);
 
-    let averageRating = movie.Ratings.reduce((tot, rating) => {
+    let hasRatings = movie.imdbRating !== "N/A"
+
+    /**
+     * @type {number}
+     */
+    let averageRating = !hasRatings ? 0 : movie.Ratings.reduce((tot, rating) => {
         if (rating.Source === "Rotten Tomatoes") {
-            let r = rating.Value.match(/([0-9\.]*)\%/i);
+            let r = rating.Value.match(/([0-9.]*)%/i);
+            console.log(r)
+
             return tot + Number(r[1]);
         } else if (rating.Source === "Internet Movie Database") {
             return tot + (movie.imdbRating * 10);
         } else if (rating.Source === "Metacritic") {
-            let r = rating.Value.match(/([0-9\.]*)(?=\/100)/i);
-            return tot + Number(r[0]);
+            let r = rating.Value.match(/([0-9\.]*)\/100/i);
+            console.log(r)
+            return tot + Number(r[1]);
         }
     }, 0) / movie.Ratings.length;
 
-    console.log("averega rating", averageRating)
-
+    averageRating = floor(averageRating)
+    console.log(averageRating)
     document.title = movie.Title;
 
-    container = createDiv().addClass('')
-        .child(
-            row = createDiv().class('row')
+    container = createDiv()
+        .addClass('row')
+        .parent(
+            createDiv().addClass('container')
         )
 
     let imgUrl = movie.Poster !== "N\\A" ? movie.Poster : false;
 
     if (imgUrl) {
 
-        createCol('s12 l6')
+        select('body')
             .style('background-image', 'url(./assets/oscar.webp)')
-            .style('background-size', 'contain')
+            .style('background-size', 'cover')
             .style('background-repeat', 'no-repeat')
             .style('background-position', 'center')
-            .style('min-height', 'calc(100vh - 20px)')
+            .style('min-height', '100vh')
+            .addClass('valign-wrapper')
     }
-    createCol('s12 l6')
-        .child(
-            createElement('h1','Thank you!')
-        )
-        .child(
-            createP('<i><strong>' + movie.Title + '</strong></i> sounds like a wonderful movie! I\'ll watch it ASAP')
-        )
 
+    let myComm = createCol('s12 m6 l4 offset-l1 card-panel teal lighten-2')
+        .child(
+            createElement('h1', 'Thank you!')
+                .style('margin-top', '1rem')
+        );
+
+    myComm.child(
+        createP('<i><strong>' + movie.Title + '</strong></i> sounds like a wonderful movie! I\'ll watch it ASAP!')
+            .addClass('flow-text')
+    )
+
+    if (hasRatings) {
+        myComm.child(
+            createP("The average rating is:")
+        )
+            .child(
+                createElement('h5', averageRating)
+            )
+    }
+
+    let card = createDiv()
+        .addClass('card');
+
+    card.child(
+        createDiv()
+            .addClass('card-image')
+            .child(
+                createElement('img')
+                    .attribute('src', imgUrl)
+            )
+    );
+
+    card
+        .child(
+            createDiv().addClass('card-content')
+                .child(
+                    createSpan(movie.Title + ' (' + movie.Year + ')').addClass('card-title')
+                )
+                .child(
+                    createP(movie.Plot)
+                )
+        );
+
+    createCol('s12 m6 l4 offset-l1 ').parent(container).child(card)
 
 }
 
@@ -101,5 +147,5 @@ function setup() {
 function createCol(className = 's12') {
     return createDiv()
         .class('col ' + className)
-        .parent(row)
+        .parent(container)
 }
