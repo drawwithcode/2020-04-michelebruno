@@ -83,38 +83,27 @@ function setup() {
             createDiv().addClass('container')
         )
 
-    let imgUrl = movie.Poster !== "N\\A" ? movie.Poster : false;
+    let imgUrl = movie.Poster !== "N\\A" ? movie.Poster : false,
+        bg = './assets/';
 
-    if (imgUrl) {
-
-        select('body')
-            .style('background-image', 'url(./assets/oscar.webp)')
-            .style('background-size', 'cover')
-            .style('background-repeat', 'no-repeat')
-            .style('background-position', 'center')
-            .style('min-height', '100vh')
-            .addClass('valign-wrapper')
+    if (averageRating > 80) {
+        bg += 'oscar'
+    } else if (averageRating > 55) {
+        bg += 'nice'
+    } else {
+        bg += 'doubt'
     }
 
-    let myComm = createCol('s12 m6 l4 offset-l1 card-panel teal lighten-2')
-        .child(
-            createElement('h1', 'Thank you!')
-                .style('margin-top', '1rem')
-        );
+    bg += '.webp';
 
-    myComm.child(
-        createP('<i><strong>' + movie.Title + '</strong></i> sounds like a wonderful movie! I\'ll watch it ASAP!')
-            .addClass('flow-text')
-    )
+    select('body')
+        .style('background-image', 'url(' + bg + ')')
+        .style('background-size', 'cover')
+        .style('background-repeat', 'no-repeat')
+        .style('background-position', 'center')
+        .style('min-height', '100vh')
+        .addClass('valign-wrapper')
 
-    if (hasRatings) {
-        myComm.child(
-            createP("The average rating is:")
-        )
-            .child(
-                createElement('h5', averageRating)
-            )
-    }
 
     let card = createDiv()
         .addClass('card');
@@ -140,6 +129,41 @@ function setup() {
         );
 
     createCol('s12 m6 l4 offset-l1 ').parent(container).child(card)
+
+    let myComm = createDiv()
+        .addClass('card-panel')
+        .style('background-color', 'unset')
+        .style('box-shadow', 'unset')
+        .style('-webkit-box-shadow', 'unset')
+
+        .parent(
+            createCol('s12 m6 l4 offset-l1 card valign-wrapper')
+                .style('min-height', '100%')
+                .style('background-color', 'rgba(244, 255, 129,.8')
+
+
+        )
+        .child(
+            createElement('h1', 'Thank you!')
+                .style('margin-top', '1rem')
+        );
+
+    myComm.child(
+        createP('<i><strong>' + movie.Title + '</strong></i> sounds like a wonderful movie! I\'ll watch it ASAP!')
+            .addClass('flow-text')
+    )
+
+    if (hasRatings) {
+        myComm.child(
+            createP("The average rating is:")
+        )
+            .child(
+                createElement('h4', averageRating + "/100")
+                    .style('text-align', 'center')
+                    .style('margin-bottom', '2rem')
+            )
+    }
+
 
 }
 

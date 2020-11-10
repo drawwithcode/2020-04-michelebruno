@@ -47,13 +47,14 @@ function setup() {
 
         }
         micButton = createButton('<i class="material-icons">mic</i>')
+
             .addClass('btn-floating btn-large waves-effect waves-light red')
             .mouseClicked(() => {
 
                 speech.start()
                 micButton.addClass('pulse')
 
-            }).parent(createDiv().addClass('col s2').parent(container))
+            }).parent(createDiv().addClass('col s2  right-align').parent(container))
 
     }
 
@@ -69,8 +70,9 @@ function setup() {
 }
 
 function onTitleChange() {
+    input.removeClass('invalid')
+    input.removeClass('valid')
     let v = this.value()
-    console.log(v)
 
     searchOnOMDB(v)
 }
@@ -90,7 +92,13 @@ function searchOnOMDB(title) {
 
     request = fetch(url.toString(), {signal: controller.signal})
         .then(r => r.json())
-        .then(({Search}) => updateList(Search))
+        .then(({Search, Response}) => {
+            if (!Search || Response === "False")
+                return input.addClass('invalid')
+
+            input.addClass('valid')
+            updateList(Search)
+        })
         .catch(() => null)
 }
 
@@ -99,16 +107,13 @@ function updateList(Search) {
     removeCollectionChildren()
     Search.forEach(movie => {
         let li = createElement('li')
-            .addClass('collection-item avatar');
+            .addClass('collection-item avatar')
+            .mousePressed(() => window.location = 'movie.html?id=' + movie.imdbID);
 
         createDiv(movie.Poster !== 'N/A' ? '<img src="' + movie.Poster.replace(/SX300\.jpg$/i, 'SX100.jpg') + '" />' : undefined)
             .parent(li)
             .child(
                 createElement('h4', movie.Title)
-            )
-            .child(
-                createA('movie.html?id=' + movie.imdbID, '<i class="material-icons">send</i>')
-                    .addClass('secondary-content')
             )
 
         collectionUl.child(li)
