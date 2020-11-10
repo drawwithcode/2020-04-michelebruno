@@ -4,7 +4,6 @@
 let title,
     container,
     input,
-    searchString,
     /** @type Promise */ request,
     /** @type AbortController */controller,
     speech,
@@ -13,60 +12,63 @@ let title,
 
 function setup() {
     // put setup code here
-
     noCanvas();
 
-    container = createDiv().addClass('row')
+    container = createDiv()
+        .addClass('row')
         .parent(
             createDiv().addClass('container')
         );
 
-    title = createElement('h1', 'What\'s your favourite movie?')
+    title = createElement('h1', 'Let\'s talk about movies');
 
     createCol('s12')
         .child(title)
+        .child(
+            createP(
+                "My roomates and I have been watching a lot of movies last days. Yes, we should have studied instead " +
+                "but now we can tell you what we think about almost any movie!"
+            )
+        );
 
     input = createInput(undefined, 'text')
         .attribute('placeholder', 'Title to search')
         .input(onTitleChange)
         .parent(container)
-        .addClass('col s10')
+        .addClass('col s10');
 
     // If browser supports SpeechRecognition, let's show a button to listen the movie title
     if (typeof webkitSpeechRecognition !== "undefined") {
+
         if (!speech) {
-            speech = new p5.SpeechRec('it')
+            speech = new p5.SpeechRec('it');
             speech.onEnd = () => {
                 if (!speech.resultString)
                     return;
 
-                input.value(speech.resultString)
-                searchOnOMDB(speech.resultString)
-                micButton.removeClass('pulse')
+                input.value(speech.resultString);
+
+                searchOnOMDB(speech.resultString);
+
+                micButton.removeClass('pulse');
             }
-
         }
-        micButton = createButton('<i class="material-icons">mic</i>')
 
+        micButton = createButton('<i class="material-icons">mic</i>')
             .addClass('btn-floating btn-large waves-effect waves-light red')
             .mouseClicked(() => {
-
                 speech.start()
                 micButton.addClass('pulse')
-
-            }).parent(createDiv().addClass('col s2  right-align').parent(container))
-
+            })
+            .parent(createDiv().addClass('col s2  right-align').parent(container))
     }
-
 
     collectionUl = createElement('ul')
         .addClass('collection')
-        .hide()
+        .hide();
 
     createCol()
-        .child(collectionUl)
-
-
+        .child(collectionUl);
 }
 
 function onTitleChange() {

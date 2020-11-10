@@ -84,14 +84,19 @@ function setup() {
         )
 
     let imgUrl = movie.Poster !== "N\\A" ? movie.Poster : false,
-        bg = './assets/';
+        bg = './assets/',
+        title = '<i><strong>' + movie.Title + '</strong></i>',
+        comment;
 
     if (averageRating > 80) {
         bg += 'oscar'
+        comment = title + " is a wonderful movie! You\'ll love it!"
     } else if (averageRating > 55) {
         bg += 'nice'
+        comment = "It was nice to watch " + title + ". Not bad!"
     } else {
         bg += 'doubt'
+        comment = "You will regret for sure if you watch this movie, bad choise!"
     }
 
     bg += '.webp';
@@ -140,22 +145,16 @@ function setup() {
             createCol('s12 m6 l4 offset-l1 card valign-wrapper')
                 .style('min-height', '100%')
                 .style('background-color', 'rgba(244, 255, 129,.8')
-
-
         )
-        .child(
-            createElement('h1', 'Thank you!')
-                .style('margin-top', '1rem')
-        );
 
     myComm.child(
-        createP('<i><strong>' + movie.Title + '</strong></i> sounds like a wonderful movie! I\'ll watch it ASAP!')
+        createP(comment)
             .addClass('flow-text')
     )
 
     if (hasRatings) {
         myComm.child(
-            createP("The average rating is:")
+            createP("Our rating is:")
         )
             .child(
                 createElement('h4', averageRating + "/100")
