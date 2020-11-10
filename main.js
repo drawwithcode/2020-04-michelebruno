@@ -110,22 +110,23 @@ function updateList(Search) {
     removeCollectionChildren()
     Search.forEach(movie => {
         let li = createElement('li')
-            .addClass('collection-item avatar')
+            .addClass('collection-item')
             .mousePressed(() => window.location = 'movie.html?id=' + movie.imdbID);
 
         createDiv()
             .addClass('row')
             .parent(li)
             .child(
-                createCol('s2')
+                createCol('s12 l2 center-align')
                     .child(
                         createElement('img')
                             .attribute('src', movie.Poster.replace(/SX300\.jpg$/i, 'SX100.jpg'))
+                            .style('margin', 'auto')
                     )
             )
             .child(
                 createElement('h4', movie.Title)
-                    .addClass('col s10')
+                    .addClass('col s12 l10')
             )
 
 
