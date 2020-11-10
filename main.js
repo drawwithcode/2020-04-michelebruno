@@ -16,7 +16,10 @@ function setup() {
 
     noCanvas();
 
-    container = createDiv().addClass('container');
+    container = createDiv().addClass('row')
+        .parent(
+            createDiv().addClass('container')
+        );
 
     title = createElement('h1', 'What\'s your favourite movie?')
 
@@ -26,25 +29,34 @@ function setup() {
     input = createInput(undefined, 'text')
         .attribute('placeholder', 'Title to search')
         .input(onTitleChange)
+        .parent(container)
+        .addClass('col s10')
 
+    // If browser supports SpeechRecognition, let's show a button to listen the movie title
     if (typeof webkitSpeechRecognition !== "undefined") {
         if (!speech) {
             speech = new p5.SpeechRec('it')
             speech.onEnd = () => {
+                if (!speech.resultString)
+                    return;
+
                 input.value(speech.resultString)
                 searchOnOMDB(speech.resultString)
+                micButton.removeClass('pulse')
             }
 
         }
         micButton = createButton('<i class="material-icons">mic</i>')
             .addClass('btn-floating btn-large waves-effect waves-light red')
             .mouseClicked(() => {
-                speech.start()
 
-            })
+                speech.start()
+                micButton.addClass('pulse')
+
+            }).parent(createDiv().addClass('col s2').parent(container))
+
     }
-    createCol()
-        .child(input, micButton)
+
 
     collectionUl = createElement('ul')
         .addClass('collection')
@@ -78,28 +90,32 @@ function searchOnOMDB(title) {
 
     request = fetch(url.toString(), {signal: controller.signal})
         .then(r => r.json())
-        .then(({Search}) => {
-            removeCollectionChildren()
-            Search.forEach(movie => {
-                let l = createElement('li')
-                    .addClass('collection-item')
+        .then(({Search}) => updateList(Search))
+        .catch(() => null)
+}
 
-                l.child(
-                    createDiv('<h4>' + movie.Title + '</h4>')
-                        .child(
-                            createA('./movie.html?t=' + movie.imdbID, '<i class="material-icons">send</i>')
-                                .addClass('secondary-content')
-                        )
-                )
 
-                collectionUl.child(l)
+function updateList(Search) {
+    removeCollectionChildren()
+    Search.forEach(movie => {
+        let li = createElement('li')
+            .addClass('collection-item avatar');
 
-            })
+        createDiv(movie.Poster !== 'N/A' ? '<img src="' + movie.Poster.replace(/SX300\.jpg$/i, 'SX100.jpg') + '" />' : undefined)
+            .parent(li)
+            .child(
+                createElement('h4', movie.Title)
+            )
+            .child(
+                createA('movie.html?id=' + movie.imdbID, '<i class="material-icons">send</i>')
+                    .addClass('secondary-content')
+            )
 
-            collectionUl.show()
+        collectionUl.child(li)
 
-        })
-        .catch(err => null)
+    })
+
+    collectionUl.show()
 }
 
 function createCol(className = 's12') {
