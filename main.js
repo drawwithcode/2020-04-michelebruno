@@ -81,7 +81,7 @@ function searchOnOMDB(title) {
         controller.abort()
     controller = new AbortController()
 
-    let url = new URL('http://www.omdbapi.com/')
+    let url = new URL('https://www.omdbapi.com/')
 
     url.searchParams.set('s', title);
     // The API key should not be public... it's the only way so far.

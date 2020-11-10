@@ -40,7 +40,7 @@ let /** @var {Movie} movie */ movie,
 
 function preload() {
     const location = new URL(window.location),
-        url = new URL('http://www.omdbapi.com/'),
+        url = new URL('https://www.omdbapi.com/'),
         movieId = location.searchParams.get('id');
 
     url.searchParams.set('apikey', '9c88f358');
