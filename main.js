@@ -29,6 +29,7 @@ function setup() {
                 "My roomates and I have been watching a lot of movies last days. Yes, we should have studied instead " +
                 "but now we can tell you what we think about almost any movie!"
             )
+                .addClass('flow-text')
         );
 
     input = createInput(undefined, 'text')
@@ -112,11 +113,21 @@ function updateList(Search) {
             .addClass('collection-item avatar')
             .mousePressed(() => window.location = 'movie.html?id=' + movie.imdbID);
 
-        createDiv(movie.Poster !== 'N/A' ? '<img src="' + movie.Poster.replace(/SX300\.jpg$/i, 'SX100.jpg') + '" />' : undefined)
+        createDiv()
+            .addClass('row')
             .parent(li)
             .child(
-                createElement('h4', movie.Title)
+                createCol('s2')
+                    .child(
+                        createElement('img')
+                            .attribute('src', movie.Poster.replace(/SX300\.jpg$/i, 'SX100.jpg'))
+                    )
             )
+            .child(
+                createElement('h4', movie.Title)
+                    .addClass('col s10')
+            )
+
 
         collectionUl.child(li)
 

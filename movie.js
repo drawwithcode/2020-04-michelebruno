@@ -67,10 +67,10 @@ function setup() {
         } else if (rating.Source === "Internet Movie Database") {
             return tot + (movie.imdbRating * 10);
         } else if (rating.Source === "Metacritic") {
-            let r = rating.Value.match(/([0-9\.]*)\/100/i);
+            let r = rating.Value.match(/([0-9.]*)\/100/i);
             console.log(r)
             return tot + Number(r[1]);
-        }
+        } else return tot;
     }, 0) / movie.Ratings.length;
 
     averageRating = floor(averageRating)
