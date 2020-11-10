@@ -42,8 +42,9 @@ function setup() {
     if (typeof webkitSpeechRecognition !== "undefined") {
 
         if (!speech) {
-            speech = new p5.SpeechRec('it');
-            speech.onEnd = () => {
+            speech = new p5.SpeechRec('en');
+            speech.interimResults = true;
+            speech.onResult = () => {
                 if (!speech.resultString)
                     return;
 
@@ -61,7 +62,7 @@ function setup() {
                 speech.start()
                 micButton.addClass('pulse')
             })
-            .parent(createDiv().addClass('col s2  right-align').parent(container))
+            .parent(createDiv().addClass('col s2  center-align').parent(container))
     }
 
     collectionUl = createElement('ul')
