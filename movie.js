@@ -28,14 +28,15 @@
  * @property {String} imdbID
  * @property {String} imdbRating
  * @property {String} imdbVotes
- */
-/** @typedef {Object} Rating
+ *
+ * @typedef {Object} Rating
  * @property {String} Source
  * @property {String} Value
+ *
  */
-let movie,
+let /** @var {Movie} movie */ movie,
     container,
-row;
+    row;
 
 function preload() {
     const location = new URL(window.location),
@@ -53,26 +54,44 @@ function setup() {
 
     console.log(movie)
 
+    let averageRating = movie.Ratings.reduce((tot, rating) => {
+        if (rating.Source === "Rotten Tomatoes") {
+            let r = rating.Value.match(/([0-9\.]*)\%/i);
+            return tot + Number(r[1]);
+        } else if (rating.Source === "Internet Movie Database") {
+            return tot + (movie.imdbRating * 10);
+        } else if (rating.Source === "Metacritic") {
+            let r = rating.Value.match(/([0-9\.]*)(?=\/100)/i);
+            return tot + Number(r[0]);
+        }
+    }, 0) / movie.Ratings.length;
+
+    console.log("averega rating", averageRating)
+
     document.title = movie.Title;
 
     container = createDiv().addClass('')
         .child(
             row = createDiv().class('row')
-)
+        )
 
     let imgUrl = movie.Poster !== "N\\A" ? movie.Poster : false;
 
     if (imgUrl) {
 
         createCol('s12 l6')
-            .style('background-image', 'url(' + imgUrl.replace(/SX300\.jpg$/i, '.jpg') + ')')
-            .style('background-size', 'cover')
+            .style('background-image', 'url(./assets/oscar.webp)')
+            .style('background-size', 'contain')
+            .style('background-repeat', 'no-repeat')
             .style('background-position', 'center')
-            .style('min-height', '100vh')
+            .style('min-height', 'calc(100vh - 20px)')
     }
-    createCol('')
+    createCol('s12 l6')
         .child(
-            createElement('h1', movie.Title)
+            createElement('h1','Thank you!')
+        )
+        .child(
+            createP('<i><strong>' + movie.Title + '</strong></i> sounds like a wonderful movie! I\'ll watch it ASAP')
         )
 
 
